@@ -1,0 +1,32 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="createTableClientRequest" author="Ahmed.Baz" labels="demo">
+        <sql>
+            CREATE TABLE CLIENT_REQUEST
+            (
+                ID                  NUMBER(10) NOT NULL,
+                REQUEST_ID          VARCHAR2(200) NOT NULL,
+                REQUEST_BODY        CLOB,
+                TAG                 VARCHAR2(255),
+                CREATED_BY          VARCHAR2(255),
+                CREATED_DATE        DATE,
+                CREATED_BY_ID       NUMBER(10),
+                LAST_MODIFIED_BY_ID NUMBER(10),
+                LAST_MODIFIED_DATE  DATE,
+                LAST_MODIFIED_BY    VARCHAR2(255),
+                PRIMARY KEY (ID)
+            );
+
+        </sql>
+        <sql>
+            CREATE SEQUENCE CLIENT_REQUEST_SEQ MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1
+                START WITH
+                    1 CACHE 20 NOORDER NOCYCLE;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
