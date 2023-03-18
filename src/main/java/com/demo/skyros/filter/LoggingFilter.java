@@ -46,23 +46,23 @@ public class LoggingFilter implements GlobalFilter {
         String requestPath = request.getURI().getPath();
 
         String requestId = request.getHeaders().get(REQUEST_ID) != null && !request.getHeaders().get(REQUEST_ID).isEmpty() ? request.getHeaders().get(REQUEST_ID).get(0) : null;
-        String[] pathList = requestPath.split("/");
-        CurrencyExchangeVO currencyExchangeVO = prepareCurrencyExchangeVO(pathList);
-        ClientRequestEntity clientRequest = new ClientRequestEntity();
+        if (null != requestId) {
+            String[] pathList = requestPath.split("/");
+            CurrencyExchangeVO currencyExchangeVO = prepareCurrencyExchangeVO(pathList);
+            ClientRequestEntity clientRequest = new ClientRequestEntity();
 
-        if (requestPath.contains("currency-conversion")) {
-            clientRequest.setTag("conversion");
+            if (requestPath.contains("currency-conversion")) {
+                clientRequest.setTag("conversion");
+            }
+            if (requestPath.contains("currency-exchange")) {
+                clientRequest.setTag("exchange");
+            }
+
+            clientRequest.setRequestId(requestId);
+            clientRequest.setRequestBody(gson.toJson(currencyExchangeVO));
+            clientRequest.setAudit(prepareAudit());
+            getClientRequestRepo().save(clientRequest);
         }
-        if (requestPath.contains("currency-exchange")) {
-            clientRequest.setTag("exchange");
-        }
-
-        clientRequest.setRequestId(requestId);
-        clientRequest.setRequestBody(gson.toJson(currencyExchangeVO));
-        clientRequest.setAudit(prepareAudit());
-        getClientRequestRepo().save(clientRequest);
-
-
     }
 
     CurrencyExchangeVO prepareCurrencyExchangeVO(String[] pathList) {
