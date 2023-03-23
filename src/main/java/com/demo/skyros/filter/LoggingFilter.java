@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -28,11 +29,15 @@ public class LoggingFilter implements GlobalFilter {
     Gson gson = builder.create();
     @Autowired
     private ClientRequestRepo clientRequestRepo;
+    @Value("${save.client.request}")
+    private boolean saveClientRequest;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
-            saveClientRequest(exchange);
+            if (saveClientRequest) {
+                saveClientRequest(exchange);
+            }
         } catch (Exception ex) {
             logger.error("failed to save Client request -> {}", ex.getMessage());
         }
