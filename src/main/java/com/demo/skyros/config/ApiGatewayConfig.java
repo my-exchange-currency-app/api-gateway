@@ -28,11 +28,11 @@ public class ApiGatewayConfig {
 
         RouteLocator build = builder
                 .routes()
-                .route(p -> p.path("/get").uri("http://httpbin.org:80/"))
-                .route(p -> p.path("/currency-exchange/**").uri("lb://currency-exchange-service"))
-                .route(p -> p.path("/currency-exchange-app/**").filters(f -> f.rewritePath("/currency-exchange-app/(?<segment>.*)", "/currency-exchange/${segment}"))
-                        .uri("lb://currency-exchange-service"))
-                .route(p -> p.path("/currency-conversion/**").uri("lb://currency-conversion-service"))
+                //.route(p -> p.path("/get").uri("http://httpbin.org:80/"))
+                .route(p -> p.path("/currency/exchange/**", "/currency/add/**", "/currency/update/**", "/currency/delete/**", "/currency/findAll/**", "/currency/find/**").uri("lb://currency-exchange-service"))
+                .route(p -> p.path("/admin/clearCache/**", "/admin/clearCacheByName/**").uri("lb://currency-exchange-service"))
+                //.route(p -> p.path("/currency-exchange-app/**").filters(f -> f.rewritePath("/currency-exchange-app/(?<segment>.*)", "/currency-exchange/${segment}")).uri("lb://currency-exchange-service"))
+                .route(p -> p.path("/currency/conversion/**").uri("lb://currency-conversion-service"))
                 .build();
         return build;
     }
