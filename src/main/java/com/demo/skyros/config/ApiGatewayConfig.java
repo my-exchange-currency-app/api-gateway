@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.function.Function;
 
-@Configuration
+//@Configuration
 public class ApiGatewayConfig {
 
-    @Bean
+    //@Bean
     public RouteLocator gatewayRouter(RouteLocatorBuilder builder) {
 
         Function<PredicateSpec, Buildable<Route>> fawryRouteFunction = p -> p.path("/fawry")
@@ -33,7 +33,7 @@ public class ApiGatewayConfig {
                 .route(p -> p.path("/currency/exchange/**", "/currency/add/**", "/currency/update/**", "/currency/delete/**", "/currency/findAll/**", "/currency/find/**").uri("lb://currency-exchange-service"))
                 .route(p -> p.path("/admin/clearCache/**", "/admin/clearCacheByName/**").uri("lb://currency-exchange-service"))
                 .route(p -> p.path("/request/add/**", "/request/find/**", "/request/findAll/**").uri("lb://logging-service"))
-                .route(p -> p.path("/transaction/**","/transactionsReport/**", "/inquiryReport/**", "/account-activation/**").uri("lb://mail-service"))
+                .route(p -> p.path("/transaction/**", "/transactionsReport/**", "/inquiryReport/**", "/account-activation/**").uri("lb://mail-service"))
                 //.route(p -> p.path("/currency-exchange-app/**").filters(f -> f.rewritePath("/currency-exchange-app/(?<segment>.*)", "/currency-exchange/${segment}")).uri("lb://currency-exchange-service"))
                 //.route(p -> p.path("/currency/conversion/**").uri("lb://currency-conversion-service"))
                 .build();
