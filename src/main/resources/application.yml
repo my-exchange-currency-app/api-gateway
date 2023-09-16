@@ -2,6 +2,10 @@ server:
   port: 8765
 
 spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:9090
   cloud:
     gateway:
       routes:
@@ -47,3 +51,12 @@ opentracing:
 #logging:
 #  level:
 #    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
