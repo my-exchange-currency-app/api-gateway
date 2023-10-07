@@ -5,6 +5,8 @@ import com.demo.skyros.security.filter.AuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final String[] PUBLIC_ENDPOINTS = {
@@ -39,6 +41,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private final Environment environment;
+
+    @Autowired
+    public SecurityConfig(Environment environment) {
+        this.environment = environment;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -47,18 +55,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .exceptionHandling()
-                .and().httpBasic()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                //.antMatchers("/user/add/**", "/user/update/**", "/user/delete/**").hasAuthority("ADMIN")
-                //.antMatchers("/user/find/**", "/user/email/**").hasAnyAuthority("ADMIN", "USER")
-                .antMatchers(PUBLIC_ENDPOINTS).permitAll()
-                .anyRequest().authenticated()
-                .and().addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                .antMatchers(HttpMethod.POST, environment.getProperty("app.auth.login-api")).permitAll()
+                .anyRequest().authenticated();
+        http.addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
@@ -69,8 +73,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthFilter authFilter() {
-        return new AuthFilter();
+    public AuthFilter authFilter() throws Exception {
+        return new AuthFilter(authenticationManager(), environment);
     }
 
     @Bean

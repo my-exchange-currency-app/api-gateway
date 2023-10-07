@@ -73,4 +73,8 @@ token:
     expiration:
         access : 864000
         refresh : 864000
+app:
+    auth:
+        login-api : /auth/login/**
+
 

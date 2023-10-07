@@ -6,11 +6,14 @@ import com.demo.skyros.security.service.JwtTokenUtil;
 import com.demo.skyros.vo.AppUserDetails;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -20,12 +23,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Log4j2
-public class AuthFilter extends OncePerRequestFilter {
+public class AuthFilter extends BasicAuthenticationFilter {
 
+    private Environment environment;
     @Autowired
     private AuthService authService;
     @Autowired
     private JwtTokenUtil tokenUtil;
+
+    @Autowired
+    public AuthFilter(AuthenticationManager authenticationManager, Environment environment) {
+        super(authenticationManager);
+        this.environment = environment;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
